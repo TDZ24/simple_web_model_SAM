@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Segment Anything Simple Web Demo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.12.0/p5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/segment-anything/0.3.1/segment-anything.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="app"></div>
+<script>
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import { SAM } from 'segment-anything';
+
+const App = () => {
+  const [image, setImage] = useState(null);
+  const [mask, setMask] = useState(null);
+
+  const handleImageChange = (event) => {
+    setImage(event.target.files[0]);
+  };
+
+  const handlePredict = async () => {
+    const sam = new SAM();
+    const prediction = await sam.predict(image);
+    setMask(prediction);
+  };
+
+  return (
+    <div>
+      <input type="file" name="image" id="image" accept="image/*" onChange={handleImageChange} />
+      <button onClick={handlePredict}>Predict</button>
+      {mask && (
+        <div>
+          <img src={image} />
+          <img src={mask} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+ReactDOM.render(<App />, document.getElementById('app'));
+</script>
+</body>
+</html>
